@@ -26,7 +26,11 @@ jobs:
     
     # init dev env
     - name: 准备编译环境
-      run: apt install -y build-essential subversion fakeroot gawk gpg
+      run: |
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install build-essential subversion fakeroot gawk gpg
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
       
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
