@@ -3,9 +3,9 @@
 set -e
 
 arch_lxd=x86_64
-ver=19.07.2
+ver=19.07.3
 dist=openwrt
-type=lxd
+type=plain
 super=fakeroot
 # iptables-mod-checksum is required by the work-around inserted by files/etc/uci-defaults/70_fill-dhcp-checksum.
 packages=iptables-mod-checksum
