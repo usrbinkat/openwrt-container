@@ -33,7 +33,7 @@ jobs:
         sudo -E apt-get -qq clean
       
     # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
+    - name: 执行编译
       run: |
         chmod +x build.sh
         ./build.sh
@@ -43,5 +43,5 @@ jobs:
       run: |
         ls
         curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress openwrt-19.07.3-x86-64-plain.tar.gz 2>&1 | tee cowtransfer.log
+        ./transfer cow --block 2621440 -s -p 64 --no-progress bin/openwrt-19.07.3-x86-64-plain.tar.gz 2>&1 | tee cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
