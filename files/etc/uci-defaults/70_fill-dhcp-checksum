@@ -8,4 +8,8 @@ if [ -e /usr/lib/iptables/libxt_CHECKSUM.so ]; then
     iptables -t mangle -A OUTPUT -p udp -m udp --dport 68 -j CHECKSUM --checksum-fill
 fi
 
+# disable dhcp
+uci set dhcp.lan.ignore="1"
+uci commit dhcp
+
 EOF
