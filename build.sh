@@ -77,10 +77,15 @@ case "$arch_lxd" in
 		subarch=64
 		arch_ipk=aarch64_generic
 		;;
-    aarch32)
+	aarch32)
 		arch=armvirt
 		subarch=32
 		arch_ipk=aarch32_generic
+		;;
+	bcm53xx)
+		arch=bcm53xx
+		subarch=generic
+		arch_ipk=arm_cortex-a9
 		;;
 	*)
 		usage
