@@ -9,7 +9,6 @@ ip6=$(ip -6 addr show eth0|grep inet6|grep global|sed -e 's|.* inet6 \([0-9a-f:]
 
 cat >> /etc/uci-defaults/60_docker-network << EOF
 #!/bin/sh
-
 uci set network.lan.proto=static
 uci set network.lan.ipaddr=$ip4
 uci set network.lan.netmask=$mask4
@@ -24,11 +23,9 @@ EOF
 
 cat >> /etc/uci-defaults/50_passwd << EOF
 #!/bin/sh
-
 echo -e "openwrtpassword\nopenwrtpassword" | passwd
 exit 0
 EOF
 
 export container=lxc
-
 exec /sbin/init "$@"
