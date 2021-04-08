@@ -5,7 +5,7 @@ WORKDIR /root/
 RUN apt-get update
 RUN apt-get -y --no-install-recommends install build-essential subversion fakeroot gawk gpg git wget ca-certificates
 
-RUN git clone https://github.com/mikma/lxd-openwrt.git
+RUN git clone https://github.com/usrbinkat/lxd-openwrt.git
 
 RUN (cd lxd-openwrt && ./build.sh -v snapshot --type plain)
 RUN mkdir rootfs
