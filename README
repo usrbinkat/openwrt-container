@@ -1,3 +1,5 @@
+# 使用actions进行编译，下述命令参考
+
 lxd-openwrt
 ===========
 
@@ -23,3 +25,16 @@ Example
 lxc image import bin/openwrt-*-lxd.tar.gz --alias openwrt
 lxc launch openwrt router
 lxc exec router passwd root
+
+
+# promox 中设置
+下载上述编译的文件至promox的容器模板后，ssh进入promox并切换为ssh
+```
+pct create 201 local:vztmpl/openwrt-19.07.3-x86-64-plain.tar.gz --rootfs local-lvm:0.5 --ostype unmanaged --hostname openwrt --arch amd64 --cores 1 --memory 1024 --swap 0
+```
+后续步骤参考 https://forum.openwrt.org/t/guide-run-openwrt-as-a-container-in-proxmox/44683
+
+若提示UDP转发未开，则
+```
+echo 'xt_TPROXY' > /etc/modules-load.d/tproxy.conf
+```

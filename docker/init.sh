@@ -1,4 +1,5 @@
 #!/bin/sh
+# https://openwrt.org/docs/guide-user/base-system/basic-networking
 
 gw4=$(ip -4 route show|grep ^default|sed -e 's/.* via \([0-9.]*\)\W.*/\1/')
 gw6=$(ip -6 route show|grep ^default|sed -e 's/.* via \([0-9a-f:]*\)\W.*/\1/')
