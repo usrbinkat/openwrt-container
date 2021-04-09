@@ -4,6 +4,7 @@ set -e
 
 arch_lxd=x86_64
 ver=19.07.6
+#ver=$(curl -sL "https://downloads.openwrt.org/releases/" | grep -vE "\-rc|fail|packages" | awk -F'[=/"]' '/19.07./{print $6}' | sort -nr | head -n1"])
 dist=openwrt
 type=plain
 super=fakeroot

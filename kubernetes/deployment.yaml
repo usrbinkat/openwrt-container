@@ -1,0 +1,154 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openwrt
+  labels:
+    app: openwrt
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwrt
+  namespace: openwrt
+  labels:
+    app: openwrt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwrt
+  template:
+    metadata:
+      name: openwrt
+      labels:
+        app: openwrt
+      annotations:
+        k8s.v1.cni.cncf.io/networks: br0@eth1, eth2@eth2, eth3@eth3
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: openwrt
+        image: quay.io/containercraft/openwrt:19.07.6
+        command: ["./init.sh"]
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+              - NET_ADMIN
+#             - NET_RAW
+#             - LEASE
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: eth2
+  namespace: openwrt
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: macvtap.network.kubevirt.io/eth2
+spec:
+  config: |
+    {
+        "cniVersion": "0.3.1",
+        "name": "eth2",
+        "type": "macvlan",
+        "master": "eth2",
+        "ipam": {
+        "type": "dhcp"
+      }
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: eth3
+  namespace: openwrt
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "eth3",
+      "type": "host-device",
+      "device": "eth3"
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: br0
+  namespace: openwrt
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br0
+spec:
+  config: >
+    {
+        "cniVersion": "0.3.1",
+        "name": "br0",
+        "plugins": [
+            {
+                "type": "bridge",
+                "bridge": "br0",
+                "ipam": {}
+            },
+            {
+                "type": "tuning"
+            }
+        ]
+    }
+---
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: bond0
+  namespace: openwrt
+spec:
+  desiredState:
+    interfaces:
+    - name: bond0
+      description: bond0
+      type: bond
+      state: up
+      ipv6:
+        dhcp: false
+        enabled: false
+      ipv4:
+        dhcp: false
+        enabled: false
+      link-aggregation:
+        mode: balance-rr
+        options:
+          miimon: '140'
+        slaves:
+        - eno2np1
+#       - eno1np0
+---
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br0
+  namespace: openwrt
+spec:
+  desiredState:
+    interfaces:
+    - name: br0
+      description: br0
+      type: linux-bridge
+      state: up
+      ipv6:
+        dhcp: false
+        enabled: false
+      ipv4:
+        dhcp: false
+        enabled: false
+      bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+        - name: bond0
+#       - ens2f0
+#       - ens2f1
+#       - eth2
+#       - eth3
